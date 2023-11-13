@@ -7,6 +7,8 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
 ```
 
 ## Problem 1
@@ -14,8 +16,57 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Problem 2
+
 ```{r}
 
+# List all CSV files in the directory
+file_paths <- list.files(path = "data", pattern = "\\.csv$", full.names = TRUE)
+
+library(tidyverse)
+
+process_file <- function(file_path) {
+  # Read the file
+  data <- read.csv(file_path)
+
+  subject_id <- strsplit(basename(file_path), "[_.]")[[1]][2]
+
+  if (grepl("con", file_path)) {
+    arm <- "Control"
+    }
+  else{
+    arm <- "Experimental"
+    }
+
+  data <- mutate(data, `Subject ID` = subject_id, Arm = arm)
+  return(data)
+}
 
 
+combined_data <- purrr::map_df(file_paths, process_file)
+
+combined_data
+
+
+combined_data <- combined_data |> pivot_longer(
+    cols = starts_with("week_"), 
+    names_to = "Week",           
+    values_to = "Observation"   
+  ) |>
+  mutate(
+    Week = parse_number(Week),
+    Arm = factor(Arm, levels = c("Control", "Experimental"))
+  )
+
+head(combined_data)
+
+## Draw the spaghetti plot
+ggplot(combined_data, aes(x = Week, y = Observation, group = `Subject ID`)) +
+  geom_line(aes(color = Arm), alpha = 0.4) +  # Add transparency to lines
+  geom_point(aes(color = Arm), alpha = 0.4) +
+  theme_minimal() +
+  labs(title = "Spaghetti Plot of Subject Observations Over Time",
+       x = "Week",
+       y = "Observation",
+       color = "Group") +
+  scale_color_manual(values = c("Control" = "blue", "Experimental" = "red"))
 ```
