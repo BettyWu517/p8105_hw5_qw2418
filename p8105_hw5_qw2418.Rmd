@@ -1,0 +1,21 @@
+---
+title: "Homework5"
+author: "Qianying Wu"
+date: "2023-11-12"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+
+
+
+## Problem 2
+```{r}
+
+
+
+```
