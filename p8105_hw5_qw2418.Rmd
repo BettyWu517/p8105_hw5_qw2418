@@ -138,6 +138,10 @@ ggplot(combined_data, aes(x = Week, y = Observation, group = `Subject ID`, color
 
 ```
 
+*comment on differences between groups *:
+In the control group, when the observations are relatively stable across weeks. However, in the experimental group, the observation increases when week increases. 
+
+
 ## Problem 3
 
 
@@ -223,7 +227,7 @@ ggplot(df, aes(x = mu, y = power)) +
 ```
 
 
-Make a plot showing the average estimate of μ̂ on the y axis and the true value of μ on the x axis. Make a second plot (or overlay on the first) the average estimate of μ̂ only in samples for which the null was rejected on the y axis and the true value of μ on the x axis. Is the sample average of μ̂ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+Make a plot showing the average estimate of μ̂ on the y axis and the true value of μ on the x axis. Make a second plot (or overlay on the first) the average estimate of μ̂ only in samples for which the null was rejected on the y axis and the true value of μ on the x axis. 
 
 ```{r}
 ggplot(df) +
@@ -238,4 +242,8 @@ ggplot(df) +
   scale_color_manual(values = c('Average μ̂' = 'blue', 'Average μ̂ (Null Rejected)' = 'red'))
 
 ```
+
+Is the sample average of μ̂ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+
+The sample average of  μ̂ across tests for which the null is rejected is only approximately equal to the true value of μ when the true value of μ is 3 or larger. This is because the power of the test is lower for smaller effect sizes, leading to a selection bias in which only the more extreme sample means lead to rejection of the null.
 
