@@ -60,17 +60,17 @@ combined_data <- combined_data |> pivot_longer(
 head(combined_data)
 
 ## Draw the spaghetti plot
-ggplot(combined_data, aes(x = Week, y = Observation, group = `Subject ID`)) +
-  geom_line(aes(color = Arm), alpha = 0.4) +  # Add transparency to lines
-  geom_point(aes(color = Arm), alpha = 0.4) +
-  theme_minimal() +
-  labs(title = "Spaghetti Plot of Subject Observations Over Time",
+ggplot(combined_data, aes(x = Week, y = Observation, group = `Subject ID`, color = Arm)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ Arm, nrow = 1) + 
+  labs(title = "Spaghetti Plot of Subject Observations in different Weeks",
        x = "Week",
        y = "Observation",
        color = "Group") +
   scale_color_manual(values = c("Control" = "blue", "Experimental" = "red"))
-```
 
+```
 
 ## Problem 3
 
@@ -87,11 +87,10 @@ x∼Normal[μ,σ]
 For each dataset, save μ̂ and the p-value arising from a test of H:μ=0 using α=0.05. Hint: to obtain the estimate and p-value, use broom::tidy to clean the output of t.test.
 
 ```{r}
-set.seed(123)
 n <- 30
-sigma <- 5000
+sigma <- 5
 mu <- c(0, 1, 2, 3, 4, 5, 6)
-iteration <- 5
+iteration <- 5000
 alpha <- 0.05
 
 
@@ -110,7 +109,7 @@ stat_test <- function(n, sigma, mu, iteration, alpha){
     mu_hat_list <- c(mu_hat_list, mu_hat)
     
     # store the rej_est_list with all the estimates that are rejected
-    if (mu_hat < alpha ){
+    if (pvalue < alpha ){
       rej_est <- clean$estimate
       rej_est_list <- c(rej_est_list, rej_est)
     }
@@ -118,12 +117,9 @@ stat_test <- function(n, sigma, mu, iteration, alpha){
   }
   power <- mean(pval_list < alpha)
   mean_estimate <- mean(mu_hat_list)
-  if (length(rej_est_list) > 0){
-    mean_est_rej <- mean(rej_est_list)
-    # If nothing is rejected, the Value should be defined
-  } else{
-    mean_est_rej <- NA
-  }
+  mean_est_rej <- mean(rej_est_list)
+
+
   
   return(c(power, mean_estimate, mean_est_rej))
 }
@@ -145,12 +141,31 @@ power
 mean_estimate
 mean_est_rej
 
+```
 
+Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of μ on the x axis. Describe the association between effect size and power.
 
+```{r}
+df <- data.frame(mu = mu, power = power, mean_estimate = mean_estimate, mean_est_rej = mean_est_rej)
+df
 
-
-
+ggplot(df, aes(x = mu, y = power)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Power vs True Value of μ", x = "True Value of μ", y = "Power")
 
 ```
 
+
+Make a plot showing the average estimate of μ̂ on the y axis and the true value of μ on the x axis. Make a second plot (or overlay on the first) the average estimate of μ̂ only in samples for which the null was rejected on the y axis and the true value of μ on the x axis. Is the sample average of μ̂ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+
+```{r}
+ggplot(df) +
+  geom_point(aes(x = mu, y = mean_estimate), color = 'blue') +
+  geom_line(aes(x = mu, y = mean_estimate), color = 'blue') +
+  geom_point(aes(x = mu, y = mean_est_rej), color = 'red') +
+  geom_line(aes(x = mu, y = mean_est_rej), color = 'red', linetype = "dashed") +
+  labs(title = "Average Estimate of μ̂ vs True Value of μ", x = "True Value of μ", y = "Average Estimate of μ̂")
+
+```
 
