@@ -136,6 +136,8 @@ ggplot(combined_data, aes(x = Week, y = Observation, group = `Subject ID`, color
        color = "Group") +
   scale_color_manual(values = c("Control" = "blue", "Experimental" = "red"))
 
+ggsave("spaghetti plot.jpg")
+
 ```
 
 *comment on differences between groups *:
@@ -224,6 +226,8 @@ ggplot(df, aes(x = mu, y = power)) +
   geom_line() +
   labs(title = "Power vs True Value of μ", x = "True Value of μ", y = "Power")
 
+ggsave("Power vs True Value of mu.jpg")
+
 ```
 
 
@@ -240,6 +244,8 @@ ggplot(df) +
        y = "Average Estimate of μ̂",
        color = "Legend") +
   scale_color_manual(values = c('Average μ̂' = 'blue', 'Average μ̂ (Null Rejected)' = 'red'))
+
+ggsave("average estimuate of mu_bar and the true value of mu.jpg")
 
 ```
 
